@@ -51,8 +51,10 @@ int CPU_turn (){
 }
 
 bool win_v (m& tauler){
-    cout<<"aaaa"<<endl;
-    bool vertical=false;
+
+/*
+bool win_h (m tauler){
+    bool horizontal=false;
     int contX=0,contO=0;
     for (int i=5;i>=0;i--){
         for (int j=0; j<6;j++){
@@ -61,8 +63,25 @@ bool win_v (m& tauler){
                 if (tauler[i][j]=="O") contO++;   
             }  
         }
-       if (contX==4) vertical=true;
-       if (contO==4) vertical=true;
+       if (contX==4) horizontal=true;
+       if (contO==4) horizontal=true;
+    }
+    return horizontal;
+}*/
+
+    bool vertical=false;
+    int contX=0,contO=0;
+    for (int i=5;i>=0;i--){
+        for (int j=0; j<6;j++){
+
+            if (tauler[i][j]=="X" and tauler[i][j+1] == "X") contX++; 
+            if (tauler[i][j]=="O" and tauler[i][j+1] == "O") contO++;   
+
+
+
+        }
+       if (contX==3) vertical=true;
+       if (contO==50) vertical=true;
     }
     return vertical;
 }
@@ -71,12 +90,12 @@ int main(){
 
     bool gameOn = true,turno = true;
     int columna, fila;
-    string playerName;
+    string playerName,ficha;
     m tauler(6,f(7," "));
 
     cout<<"Nombre del jugador: ";cin>>playerName;cout<<endl;
     
-    get_tauler(tauler); //mostramos el tablero en el estado actual
+    get_tauler(tauler);
 
     while(gameOn){
 
@@ -90,7 +109,7 @@ int main(){
             cout<<endl;
 
             cout<<"A quina columna vols col·locar la teva fitxa? (0−6) : "; cin>>columna;
-            if(columna <=6 and correct_GPS(tauler,columna,fila)){
+            if(columna<= 6 and correct_GPS(tauler,columna,fila)){
                 turno = false;
                 set_casella(tauler,columna,fila,"X");
                 get_tauler(tauler);
@@ -106,7 +125,7 @@ int main(){
                         cout<<"SE ACABO"<<endl;
                         gameOn = false;
         }else           turno = true;
-        
+      
 
         while(turno){
 
