@@ -2,6 +2,7 @@
 #include <vector>
 #include <ctime>
 #include <cstdlib>
+#include <string>
 using namespace std;
 
 typedef vector<string> f;
@@ -50,47 +51,88 @@ int CPU_turn (){
     return columna;
 }
 
-bool win_v (m& tauler){
+bool win_v(m& tauler, string ficha){
+    bool vertical = false;
+    int cont = 0;
 
-/*
-bool win_h (m tauler){
-    bool horizontal=false;
-    int contX=0,contO=0;
-    for (int i=5;i>=0;i--){
-        for (int j=0; j<6;j++){
-            while (tauler[i][j]==tauler[i][j+1]) {
-                if (tauler[i][j]=="X") contX++; 
-                if (tauler[i][j]=="O") contO++;   
-            }  
-        }
-       if (contX==4) horizontal=true;
-       if (contO==4) horizontal=true;
-    }
-    return horizontal;
-}*/
-
-    bool vertical=false;
-    int contX=0,contO=0;
-    for (int i=5;i>=0;i--){
-        for (int j=0; j<6;j++){
-
-            if (tauler[i][j]=="X" and tauler[i][j+1] == "X") contX++; 
-            if (tauler[i][j]=="O" and tauler[i][j+1] == "O") contO++;   
-
+    for(int column = 0; column <= 6; column ++){
+        for(int fila = 5; fila >= 0; fila--){
+            if(tauler[column][fila] == ficha and tauler[column][fila-1]== ficha) cont++;
+            else cont = 0;
 
 
         }
-       if (contX==3) vertical=true;
-       if (contO==50) vertical=true;
+        if (cont == 3) vertical = true;
+        cont = 0;
     }
     return vertical;
 }
+
+
+/*
+bool win_v (m& tauler, string ficha){
+
+    bool vertical=false;
+    int cont=0;
+
+    for (int i=5;i>=0;i--){
+        for (int j=0; j<6;j++){
+            if (tauler[i][j]==ficha and tauler[i][j+1] == ficha) cont++; 
+        }
+        if (cont==3) vertical=true;
+        cont=0;
+    }
+    return vertical;
+ }
+*/
+bool win_h(m& tauler, string ficha){
+    bool horizontal = false;
+    int cont = 0;
+
+    for(int i = 5; i>= 0; i--){
+        for(int j = 0; j <= 6; j++){
+            if(tauler[i][j] == ficha and tauler[i][j+1] == ficha) cont ++;
+            else cont = 0;         
+        }
+        if (cont==3) horizontal=true;
+        cont = 0;        
+    }
+    return horizontal;         
+}
+
+
+bool win_d (m& tauler, string ficha){
+    //gabrol
+    bool diagonal=false;
+    int cont=0;
+    for (int i=5;i>=0;i--){
+        for (int j=0; j<6;j++){
+
+            if (tauler[i][j]==ficha and tauler[i][j+1] == ficha) cont++; 
+
+
+        }
+       if (cont==3) diagonal=true;
+    }
+    return diagonal;
+}
+
+string win_check(m& tauler, string ficha){
+    string way = "no";
+
+    if(win_v(tauler,ficha)) way = "vertical";
+    if(win_h(tauler,ficha)) way = "horizontal";
+    //if(win_d(tauler,ficha)) way = "diagonal";
+
+    return way;
+   
+}  
 
 int main(){
 
     bool gameOn = true,turno = true;
     int columna, fila;
-    string playerName,ficha;
+    string playerName,ficha,way;
     m tauler(6,f(7," "));
 
     cout<<"Nombre del jugador: ";cin>>playerName;cout<<endl;
@@ -98,7 +140,6 @@ int main(){
     get_tauler(tauler);
 
     while(gameOn){
-
     
         while(turno){   
 
@@ -109,23 +150,22 @@ int main(){
             cout<<endl;
 
             cout<<"A quina columna vols col·locar la teva fitxa? (0−6) : "; cin>>columna;
+            
             if(columna<= 6 and correct_GPS(tauler,columna,fila)){
                 turno = false;
                 set_casella(tauler,columna,fila,"X");
                 get_tauler(tauler);
             }
-            else{
-                cout<<"Introduce una casilla valida!"<<endl;
-            }
+            else cout<<"Introduce una casilla valida!"<<endl;
         }
 
+        way = win_check(tauler, "X");
 
-
-        if(win_v(tauler)){
-                        cout<<"SE ACABO"<<endl;
-                        gameOn = false;
-        }else           turno = true;
-      
+        if(way != "no"){
+            cout<<"El jugador "<<playerName<<" ha conectado 4 en "<<way<<endl;
+            gameOn = false;
+        }
+        else turno = true;
 
         while(turno){
 
@@ -143,16 +183,16 @@ int main(){
                 set_casella(tauler,columna,fila,"O");
                 get_tauler(tauler);
             }
-            else{
-                cout<<"Introduce una casilla valida!"<<endl;
-            }
+            else cout<<"Introduce una casilla valida!"<<endl;
         }
 
+        way = win_check(tauler, "O");
 
-        if(win_v(tauler)){
-                    cout<<"SE ACABO"<<endl;
-                    gameOn = false;
-        }else       turno = true;
+        if(way != "no"){
+            cout<<"La CPU ha conectado 4 en "<<way<<endl;
+            gameOn = false;
+        }
+        else turno = true;
 
     }
 }
