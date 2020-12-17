@@ -61,37 +61,49 @@ bool win_v (m& tauler, string ficha, int columna){
     for(int i = 0; i <= 5; i++){
         if(match){
             if(tauler[i][columna] == ficha) cont++;
-
+        
             else{
                 match = false;
                 cont = 0;
             }
         }
         
-        if(tauler[i][columna] == ficha && !match){
+        if(tauler[i][columna] == ficha and not match){
             match = true;
             cont++;
         }
-    }
-    
+
     if(cont == 4) vertical = true;
+    
+    }
     
     return vertical;
 }
 
-bool win_h(m& tauler, string ficha){
+bool win_h(m& tauler, string ficha, int fila){
     bool horizontal = false;
+    bool match = false;
     int cont = 0;
-
-    for(int i = 5; i>= 0; i--){
-        for(int j = 0; j <= 6; j++){
-            if(tauler[i][j] == ficha and tauler[i][j+1] == ficha) cont ++;
-            else cont = 0;         
+    for(int j = 0; j<= 6; j++){
+        if(match){
+            if(tauler[fila][j] == ficha) cont++;
+        
+            else{
+                match = false;
+                cont = 0;
+            }
         }
-        if (cont==3) horizontal=true;
-        cont = 0;        
+        
+        if(tauler[fila][j] == ficha and not match){
+            match = true;
+            cont++;
+        }
+
+    if(cont == 4) horizontal = true;
+    
     }
-    return horizontal;         
+    
+    return horizontal;     
 }
 
 
@@ -111,11 +123,11 @@ bool win_d (m& tauler, string ficha){
     return diagonal;
 }
 
-string win_check(m& tauler, string ficha, int columna){
+string win_check(m& tauler, string ficha, int columna, int fila){
     string way = "no";
 
     if(win_v(tauler,ficha,columna)) way = "vertical";
-   // if(win_h(tauler,ficha)) way = "horizontal";
+    if(win_h(tauler,ficha,fila)) way = "horizontal";
     //if(win_d(tauler,ficha)) way = "diagonal";
 
     return way;
@@ -153,7 +165,7 @@ int main(){
             else cout<<"Introduce una casilla valida!"<<endl;
         }
 
-        way = win_check(tauler, "X",columna);
+        way = win_check(tauler, "X",columna,fila);
 
         if(way != "no"){
             cout<<"El jugador "<<playerName<<" ha conectado 4 en "<<way<<endl;
@@ -180,7 +192,7 @@ int main(){
             else cout<<"Introduce una casilla valida!"<<endl;
         }
 
-        way = win_check(tauler, "O",columna);
+        way = win_check(tauler, "O",columna,fila);
 
         if(way != "no"){
             cout<<"La CPU ha conectado 4 en "<<way<<endl;
