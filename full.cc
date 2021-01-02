@@ -73,7 +73,7 @@ bool win_v (m& tauler, string ficha, int columna){
             cont++;
         }
 
-    if(cont == 4) vertical = true;
+        if(cont == 4) vertical = true;
     
     }
     
@@ -99,7 +99,7 @@ bool win_h(m& tauler, string ficha, int fila){
             cont++;
         }
 
-    if(cont == 4) horizontal = true;
+        if(cont == 4) horizontal = true;
     
     }
     
@@ -107,102 +107,119 @@ bool win_h(m& tauler, string ficha, int fila){
 }
 
 
-bool win_d_left (m& tauler, string ficha){
+bool win_d_right (m& tauler, string ficha, int fila, int columna){
     bool diagonal = false;
     bool match = false;
-    bool end = false;
-    unsigned int i = 2;
-    unsigned int j = 0;
-    unsigned int jMax = 3;
-    unsigned int jMin = 1;
-    unsigned int iMin = i;
     int cont = 0;
-    
-    while(j <= 5  and not diagonal){
-        //cout<<i<<" "<<j<<endl;
-        //cout<<"cont "<<cont<<endl;
-        if(match){
+    bool end = false;
 
-            if(tauler[i][j] == ficha){
-                match = true;
-                cont++;
-                //cout<<"TAAASDASD   "<<tauler[i][j]<<"  "<<i<<j<<endl;
+    while(!end){
 
-            }else{
-                match = false;
-                cont = 0;                
-            }
-
+        if(columna == 6 or fila == 0) end = true;
+        else{
+            fila--;
+            columna++;
         }
 
-        if(tauler[i][j] == ficha and not match){
-            //cout<<"TAAASDASD   "<<tauler[i][j]<<"  "<<i<<j<<endl;
+    }
+
+    end = false;
+    int filaAux = fila;
+    int columnaAux = columna;
+    while(!end){
+
+        if(columnaAux == 0 or filaAux == 5) end = true;
+        else{
+            filaAux++;
+            columnaAux--;
+        }
+    }
+
+    while(fila <= filaAux and columna >= columnaAux){
+
+        if(match){
+        
+            if(tauler[fila][columna] == ficha){
+                cont++;
+            } 
+            else{
+                match = false;
+                cont = 0;
+            }
+        }
+        
+        if(tauler[fila][columna] == ficha and not match){
+
             match = true;
             cont++;
         }
+
         if(cont == 4) diagonal = true;
-
-        if(j == jMax){
-            if (iMin != 0) iMin -= 1;
-            i = iMin;
-            j = 0;
-            jMax += 1;
-
-        }else{
-            j++;
-            i++;
-        }
+        
+        fila++;
+        columna--;
 
     }
-    if(!diagonal){
-        i = 0;
-        j = 1;
-        cont = 0;
-        jMax = 6;
 
-        while(!end and not diagonal){
-            //cout<<i<<" "<<j<<endl;
-            //cout<<"cont "<<cont<<endl;
-            if(match){
-
-                if(tauler[i][j] == ficha){
-                    match = true;
-                    cont++;
-                    cout<<"TAAASDASD   "<<tauler[i][j]<<"  "<<i<<j<<endl;
-
-                }else{
-                    match = false;
-                    cont = 0;                
-                }
-
-            }
-
-            if(tauler[i][j] == ficha and not match){
-                //cout<<"TAAASDASD   "<<tauler[i][j]<<"  "<<i<<j<<endl;
-                match = true;
-                cont++;
-            }
-            if(cont == 4) diagonal = true;
-
-            if(j == jMax){
-                jMin += 1;
-                i = 0;
-                j = jMin;
-                if(i == 0 and j == 4) end = true;
-
-            }else{
-                j++;
-                i++;
-            }
-
-        }    
-    }
     return diagonal;
 
 }
 
-bool win_d_right (m& tauler, string ficha){
+bool win_d_left (m& tauler, string ficha, int fila, int columna){
 
+    bool diagonal = false;
+    bool match = false;
+    int cont = 0;
+    bool end = false;
+
+    while(!end){
+
+        if(columna == 0 or fila == 0) end = true;
+        else{
+            fila--;
+            columna--;
+        }
+
+    }
+
+    end = false;
+    int filaAux = fila;
+    int columnaAux = columna;
+    while(!end){
+
+        if(columnaAux == 6 or filaAux == 5) end = true;
+        else{
+            filaAux++;
+            columnaAux++;
+        }
+    }
+
+    while(fila <= filaAux and columna <= columnaAux){
+
+        if(match){
+        
+            if(tauler[fila][columna] == ficha){
+                cont++;
+            } 
+            else{
+                match = false;
+                cont = 0;
+            }
+        }
+        
+        if(tauler[fila][columna] == ficha and not match){
+
+            match = true;
+            cont++;
+        }
+
+        if(cont == 4) diagonal = true;
+        
+        fila++;
+        columna++;
+    }
+
+    return diagonal;
 }
 
 string win_check(m& tauler, string ficha, int columna, int fila){
@@ -210,9 +227,8 @@ string win_check(m& tauler, string ficha, int columna, int fila){
 
     if(win_h(tauler,ficha,fila)) way = "horizontal";
     if(win_v(tauler,ficha,columna)) way = "vertical";
-    //if(win_d_right(tauler,ficha)) way = "diagonal derecha";
-    if(win_d_left(tauler,ficha)) way = "diagonal izquierda";
-
+    if(win_d_right(tauler,ficha, fila, columna)) way = "diagonal derecha";
+    if(win_d_left(tauler,ficha, fila, columna)) way = "diagonal izquierda";
     return way;
    
 }  
@@ -220,7 +236,7 @@ string win_check(m& tauler, string ficha, int columna, int fila){
 int main(){
 
     bool gameOn = true,turno = true;
-    int columna, fila;
+    int columna, fila, turnoCounter = 0;
     string playerName,ficha,way;
     m tauler(6,f(7," "));
 
@@ -231,57 +247,52 @@ int main(){
     while(gameOn){
     
         while(turno){   
-
+            
             cout<<endl;
             cout<<"================================"<<endl;
-            cout<<"Turno de "<<playerName<<endl;
+            if(turnoCounter%2 == 0) cout<<"Turno de "<<playerName<<endl;
+            else cout<<"Turno de CPU"<<endl;
+            
             cout<<"================================"<<endl;
             cout<<endl;
 
-            cout<<"A quina columna vols col·locar la teva fitxa? (0−6) : "; cin>>columna;
+            if(turnoCounter%2 == 0){
+                cout<<"A quina columna vols col·locar la teva fitxa? (0−6) : "; cin>>columna;
+            } 
+            else{
+                columna = CPU_turn();
+                //columna = 0;
+                cout<<"A quina columna vols col·locar la teva fitxa? (0−6) : "; cout<<columna<<endl;
+            }
+            
             
             if(columna<= 6 and correct_GPS(tauler,columna,fila)){
                 turno = false;
-                set_casella(tauler,columna,fila,"X");
+                if(turnoCounter%2 == 0) set_casella(tauler,columna,fila,"X");
+                else                    set_casella(tauler,columna,fila,"O");
                 get_tauler(tauler);
             }
             else cout<<"Introduce una casilla valida!"<<endl;
         }
 
-        way = win_check(tauler, "X",columna,fila);
+        if(turnoCounter%2 == 0) way = win_check(tauler, "X",columna,fila);
+        else                    way = win_check(tauler, "O",columna,fila);
 
         if(way != "no"){
-            cout<<"El jugador "<<playerName<<" ha conectado 4 en "<<way<<endl;
+            if(turnoCounter%2 == 0) cout<<"El jugador "<<playerName<<" ha conectado 4 en "<<way<<endl;
+            else                    cout<<"La CPU ha conectado 4 en "<<way<<endl;
+
             gameOn = false;
         }
         else turno = true;
 
-        while(turno){
+        turnoCounter++;
 
-            cout<<endl;
-            cout<<"================================"<<endl;            
-            cout<<"Turno de CPU"<<endl;   
-            cout<<"================================"<<endl;
-            cout<<endl;            
-
-            columna = CPU_turn();
-            //columna = 0;
-            cout<<"A quina columna vols col·locar la teva fitxa? (0−6) : "; cout<<columna<<endl;
-            if(correct_GPS(tauler,columna,fila)){
-                turno = false;
-                set_casella(tauler,columna,fila,"O");
-                get_tauler(tauler);
-            }
-            else cout<<"Introduce una casilla valida!"<<endl;
-        }
-
-        way = win_check(tauler, "O",columna,fila);
-
-        if(way != "no"){
-            cout<<"La CPU ha conectado 4 en "<<way<<endl;
+        if(turnoCounter == 42){
+            cout<<"EMPATE!"<<endl;
             gameOn = false;
+
         }
-        else turno = true;
 
     }
 }
