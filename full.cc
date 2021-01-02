@@ -107,28 +107,111 @@ bool win_h(m& tauler, string ficha, int fila){
 }
 
 
-bool win_d (m& tauler, string ficha){
-    //gabrol
-    bool diagonal=false;
-    int cont=0;
-    for (int i=5;i>=0;i--){
-        for (int j=0; j<6;j++){
+bool win_d_left (m& tauler, string ficha){
+    bool diagonal = false;
+    bool match = false;
+    bool end = false;
+    unsigned int i = 2;
+    unsigned int j = 0;
+    unsigned int jMax = 3;
+    unsigned int jMin = 1;
+    unsigned int iMin = i;
+    int cont = 0;
+    
+    while(j <= 5  and not diagonal){
+        //cout<<i<<" "<<j<<endl;
+        //cout<<"cont "<<cont<<endl;
+        if(match){
 
-            if (tauler[i][j]==ficha and tauler[i][j+1] == ficha) cont++; 
+            if(tauler[i][j] == ficha){
+                match = true;
+                cont++;
+                //cout<<"TAAASDASD   "<<tauler[i][j]<<"  "<<i<<j<<endl;
 
+            }else{
+                match = false;
+                cont = 0;                
+            }
 
         }
-       if (cont==3) diagonal=true;
+
+        if(tauler[i][j] == ficha and not match){
+            //cout<<"TAAASDASD   "<<tauler[i][j]<<"  "<<i<<j<<endl;
+            match = true;
+            cont++;
+        }
+        if(cont == 4) diagonal = true;
+
+        if(j == jMax){
+            if (iMin != 0) iMin -= 1;
+            i = iMin;
+            j = 0;
+            jMax += 1;
+
+        }else{
+            j++;
+            i++;
+        }
+
+    }
+    if(!diagonal){
+        i = 0;
+        j = 1;
+        cont = 0;
+        jMax = 6;
+
+        while(!end and not diagonal){
+            //cout<<i<<" "<<j<<endl;
+            //cout<<"cont "<<cont<<endl;
+            if(match){
+
+                if(tauler[i][j] == ficha){
+                    match = true;
+                    cont++;
+                    cout<<"TAAASDASD   "<<tauler[i][j]<<"  "<<i<<j<<endl;
+
+                }else{
+                    match = false;
+                    cont = 0;                
+                }
+
+            }
+
+            if(tauler[i][j] == ficha and not match){
+                //cout<<"TAAASDASD   "<<tauler[i][j]<<"  "<<i<<j<<endl;
+                match = true;
+                cont++;
+            }
+            if(cont == 4) diagonal = true;
+
+            if(j == jMax){
+                jMin += 1;
+                i = 0;
+                j = jMin;
+                if(i == 0 and j == 4) end = true;
+
+            }else{
+                j++;
+                i++;
+            }
+
+        }    
     }
     return diagonal;
+
+}
+
+bool win_d_left (m& tauler, string ficha){
+
 }
 
 string win_check(m& tauler, string ficha, int columna, int fila){
     string way = "no";
 
-    if(win_v(tauler,ficha,columna)) way = "vertical";
     if(win_h(tauler,ficha,fila)) way = "horizontal";
-    //if(win_d(tauler,ficha)) way = "diagonal";
+    if(win_v(tauler,ficha,columna)) way = "vertical";
+    //if(win_d_right(tauler,ficha)) way = "diagonal derecha";
+    if(win_d_left(tauler,ficha)) way = "diagonal izquierda";
 
     return way;
    
