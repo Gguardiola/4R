@@ -201,7 +201,7 @@ bool win_d_left (m& tauler, string ficha){
 
 }
 
-bool win_d_left (m& tauler, string ficha){
+bool win_d_right (m& tauler, string ficha){
 
 }
 
