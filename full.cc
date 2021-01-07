@@ -5,294 +5,271 @@
 #include <string>
 using namespace std;
 
-typedef vector<string> f;
-typedef vector<f> m;
+typedef vector<string> r;
+typedef vector<r> matrix;
 
-void get_tauler(m& tauler){
-        cout<<" -----------------------------";
-    cout<<endl;    
-    for(unsigned int j = 0;j< tauler.size();j++){
+void get_board(matrix& board){
+    //Pre: matrix filled with " ", conformed by 7 columns & 6 rows.
+    //Post: board filled with the corresponding tokens.
+    cout<<" -----------------------------";
+    cout<<endl; 
+    for(unsigned int j = 0;j< board.size();j++){
         cout<<j;
-        for(unsigned int i = 0;i< tauler[j].size();i++){
-            cout<<" | "<<tauler[j][i];
-
+        for(unsigned int i = 0;i< board[j].size();i++){
+            cout<<" | "<<board[j][i];
         }
         cout<<" |"<<endl;
         cout<<" -----------------------------";
         cout<<endl;
     }
-        cout<<"  | 0 | 1 | 2 | 3 | 4 | 5 | 6 |"<<endl;
-
+    cout<<"  | 0 | 1 | 2 | 3 | 4 | 5 | 6 |"<<endl;
 }
 
-bool correct_GPS (m&tauler, int columna, int& fila){
-    bool vacio=false;
-
-    fila=5; 
-
-    while((fila>=0) and (not vacio)){
-        if (tauler[fila][columna]==" ") vacio=true;
-        else {
-            fila--;                
-        }
+bool slot_checker (matrix&board, int column, int& row){
+    //Pre: The board and two int that are the coordenates (column/row) where the token will go.
+    //Post: Returns true if the coordenates are suitable to contain a token.
+    bool empty=false;
+    row=5; 
+    while((row>=0) and (not empty)){
+        //Inv: The latest examinated row is not empty.
+        if (board[row][column]==" ") empty=true;
+        else row--;
     }
-    return vacio;
+    return empty;
 }
 
-void set_casella(m& tauler, int columna, int fila, string ficha){
-    tauler[fila][columna] = ficha;
+void set_slot(matrix& board, int column, int row, string token){
+    //Pre: Receives the coordinates of the empty last item in the column.
+    //Post: Fills the location acordding to the coordinates.
+    board[row][column] = token;
 }
 
 int CPU_turn (){
-
-    int columna=rand()%7;
-
-    return columna;
+    //Pre: after users turn.
+    //Post: Returns a number between 0-6 that will be the column where the computer plays its token.
+    int column=rand()%7;
+    return column;
 }
 
-
-
-
-
-bool win_v (m& tauler, string ficha, int columna){
+bool win_v (matrix& board, string token, int column){
+    //Pre: receives last token position.
+    //Post: returns true if there are 4 equal tokens vertically aligned.
     bool vertical = false;
     bool match = false;
-    int cont = 0;
+    int count = 0;
     for(int i = 0; i <= 5; i++){
         if(match){
-            if(tauler[i][columna] == ficha) cont++;
-        
+            if(board[i][column] == token) count++;
             else{
                 match = false;
-                cont = 0;
+                count = 0;
             }
         }
-        
-        if(tauler[i][columna] == ficha and not match){
+        if(board[i][column] == token and not match){
             match = true;
-            cont++;
+            count++;
         }
-
-        if(cont == 4) vertical = true;
-    
+        if(count == 4) vertical = true;
     }
-    
     return vertical;
 }
 
-bool win_h(m& tauler, string ficha, int fila){
+bool win_h(matrix& board, string token, int row){
+    //Pre: receives last token position.
+    //Post: returns true if there are 4 equal tokens horizontally aligned.
     bool horizontal = false;
     bool match = false;
-    int cont = 0;
+    int count = 0;
     for(int j = 0; j<= 6; j++){
         if(match){
-            if(tauler[fila][j] == ficha) cont++;
-        
+            if(board[row][j] == token) count++;
             else{
                 match = false;
-                cont = 0;
+                count = 0;
             }
         }
-        
-        if(tauler[fila][j] == ficha and not match){
+        if(board[row][j] == token and not match){
             match = true;
-            cont++;
+            count++;
         }
-
-        if(cont == 4) horizontal = true;
-    
+        if(count == 4) horizontal = true;
     }
-    
     return horizontal;     
 }
 
-
-bool win_d_right (m& tauler, string ficha, int fila, int columna){
+bool win_d_right (matrix& board, string token, int row, int column){
+    //Pre: receives last token position.
+    //Post: returns true if there are 4 equal tokens / aligned.
     bool diagonal = false;
     bool match = false;
-    int cont = 0;
+    int count = 0;
     bool end = false;
-
     while(!end){
-
-        if(columna == 6 or fila == 0) end = true;
+        //Inv: the actual position is not at the upper or right tip of the board
+        if(column == 6 or row == 0) end = true;
         else{
-            fila--;
-            columna++;
+            row--;
+            column++;
         }
-
     }
-
     end = false;
-    int filaAux = fila;
-    int columnaAux = columna;
+    int row_aux = row;
+    int column_aux = column;
     while(!end){
-
-        if(columnaAux == 0 or filaAux == 5) end = true;
+        //Inv: the actual position is not at the lower or left tip of the board
+        if(column_aux == 0 or row_aux == 5) end = true;
         else{
-            filaAux++;
-            columnaAux--;
+            row_aux++;
+            column_aux--;
         }
     }
-
-    while(fila <= filaAux and columna >= columnaAux){
-
+    while(row <= row_aux and column >= column_aux){
+        //Inv: Last examined element was not the last on the / diagonal.
         if(match){
-        
-            if(tauler[fila][columna] == ficha){
-                cont++;
-            } 
+            if(board[row][column] == token) count++; 
             else{
                 match = false;
-                cont = 0;
+                count = 0;
             }
         }
-        
-        if(tauler[fila][columna] == ficha and not match){
-
+        if(board[row][column] == token and not match){
             match = true;
-            cont++;
+            count++;
         }
-
-        if(cont == 4) diagonal = true;
-        
-        fila++;
-        columna--;
-
+        if(count == 4) diagonal = true;
+        row++;
+        column--;
     }
 
     return diagonal;
 
 }
 
-bool win_d_left (m& tauler, string ficha, int fila, int columna){
-
+bool win_d_left (matrix& board, string token, int row, int column){
+    //Pre: receives last token position.
+    //Post: returns true if there are 4 equal tokens \ aligned.
     bool diagonal = false;
     bool match = false;
-    int cont = 0;
+    int count = 0;
     bool end = false;
-
     while(!end){
-
-        if(columna == 0 or fila == 0) end = true;
+        //Inv: the actual position is not at the upper or left tip of the board.
+        if(column == 0 or row == 0) end = true;
         else{
-            fila--;
-            columna--;
+            row--;
+            column--;
         }
-
     }
-
     end = false;
-    int filaAux = fila;
-    int columnaAux = columna;
+    int row_aux = row;
+    int column_aux = column;
     while(!end){
-
-        if(columnaAux == 6 or filaAux == 5) end = true;
+        //Inv: the actual position is not at the lower or left tip of the board.
+        if(column_aux == 6 or row_aux == 5) end = true;
         else{
-            filaAux++;
-            columnaAux++;
+            row_aux++;
+            column_aux++;
         }
     }
 
-    while(fila <= filaAux and columna <= columnaAux){
-
+    while(row <= row_aux and column <= column_aux){
+        //Inv: Last examined element was not the last on the \ diagonal
         if(match){
         
-            if(tauler[fila][columna] == ficha){
-                cont++;
+            if(board[row][column] == token){
+                count++;
             } 
             else{
                 match = false;
-                cont = 0;
+                count = 0;
             }
         }
         
-        if(tauler[fila][columna] == ficha and not match){
-
+        if(board[row][column] == token and not match){
             match = true;
-            cont++;
+            count++;
         }
 
-        if(cont == 4) diagonal = true;
+        if(count == 4) diagonal = true;
         
-        fila++;
-        columna++;
+        row++;
+        column++;
     }
 
     return diagonal;
 }
 
-string win_check(m& tauler, string ficha, int columna, int fila){
-    string way = "no";
-
-    if(win_h(tauler,ficha,fila)) way = "horizontal";
-    if(win_v(tauler,ficha,columna)) way = "vertical";
-    if(win_d_right(tauler,ficha, fila, columna)) way = "diagonal derecha";
-    if(win_d_left(tauler,ficha, fila, columna)) way = "diagonal izquierda";
+string win_check(matrix& board, string token, int column, int row){
+    //Pre: recives the user identity and the coordenates of the token.
+    //Post: returns the direction if there is a winner combination or a "none" if there is no winner.
+    string way = "none";
+    if(win_h(board,token,row)) way = "horizontally.";
+    if(win_v(board,token,column)) way = "vertically.";
+    if(win_d_right(board,token, row, column)) way = "diagonally right. ";
+    if(win_d_left(board,token, row, column)) way = "diagonally left.";
     return way;
-   
 }  
 
 int main(){
 
-    bool gameOn = true,turno = true;
-    int columna, fila, turnoCounter = 0;
-    string playerName,ficha,way;
-    m tauler(6,f(7," "));
+    bool gameOn = true,turn = true;
+    int column, row, turnCounter = 0;
+    string playerName,token,way;
+    matrix board(6,r(7," "));
+    srand(5);
 
-    cout<<"Nombre del jugador: ";cin>>playerName;cout<<endl;
+    cout<<"Player name: ";cin>>playerName;cout<<endl;
     
-    get_tauler(tauler);
+    get_board(board);
 
     while(gameOn){
-    
-        while(turno){   
-            
+        //Inv: The game has not ended.
+        while(turn){  
+            //Inv: Next turn.
             cout<<endl;
             cout<<"================================"<<endl;
-            if(turnoCounter%2 == 0) cout<<"Turno de "<<playerName<<endl;
-            else cout<<"Turno de CPU"<<endl;
+            if(turnCounter%2 == 0) cout<<playerName<<"'s turn "<<endl;
+            else cout<<"CPU's turn"<<endl;
             
             cout<<"================================"<<endl;
             cout<<endl;
 
-            if(turnoCounter%2 == 0){
-                cout<<"A quina columna vols col·locar la teva fitxa? (0−6) : "; cin>>columna;
+            if(turnCounter%2 == 0){
+                cout<<"In which column do you want to place your token? (0−6): "; cin>>column;
             } 
             else{
-                columna = CPU_turn();
-                //columna = 0;
-                cout<<"A quina columna vols col·locar la teva fitxa? (0−6) : "; cout<<columna<<endl;
+                column = CPU_turn();
+                cout<<"In which column do you want to place your token? (0−6): "; cout<<column<<endl;
             }
-            
-            
-            if(columna<= 6 and correct_GPS(tauler,columna,fila)){
-                turno = false;
-                if(turnoCounter%2 == 0) set_casella(tauler,columna,fila,"X");
-                else                    set_casella(tauler,columna,fila,"O");
-                get_tauler(tauler);
+
+            if(column<= 6 and slot_checker(board,column,row)){
+                turn = false;
+                if(turnCounter%2 == 0) set_slot(board,column,row,"X");
+                else                    set_slot(board,column,row,"O");
+                get_board(board);
             }
-            else cout<<"Introduce una casilla valida!"<<endl;
+            else cout<<"Insert a valid column!"<<endl;
         }
 
-        if(turnoCounter%2 == 0) way = win_check(tauler, "X",columna,fila);
-        else                    way = win_check(tauler, "O",columna,fila);
+        if(turnCounter%2 == 0) way = win_check(board, "X",column,row);
+        else                   way = win_check(board, "O",column,row);
 
-        if(way != "no"){
-            if(turnoCounter%2 == 0) cout<<"El jugador "<<playerName<<" ha conectado 4 en "<<way<<endl;
-            else                    cout<<"La CPU ha conectado 4 en "<<way<<endl;
-
+        if(way != "none"){
+            cout<<endl;
+            if(turnCounter%2 == 0) cout<<playerName<<" has connected 4 "<<way<<endl;
+            else                   cout<<"The CPU has connected 4 "<<way<<endl;
+            
             gameOn = false;
         }
-        else turno = true;
+        else turn = true;
 
-        turnoCounter++;
+        turnCounter++;
 
-        if(turnoCounter == 42){
-            cout<<"EMPATE!"<<endl;
+        if(turnCounter == 42){
+            cout<<endl;
+            cout<<"It's a tie! Well played."<<endl;
             gameOn = false;
 
         }
-
     }
 }
