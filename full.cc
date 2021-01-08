@@ -203,10 +203,10 @@ string win_check(matrix& board, string token, int column, int row){
     //Pre: recives the user identity and the coordenates of the token.
     //Post: returns the direction if there is a winner combination or a "none" if there is no winner.
     string way = "none";
-    if(win_h(board,token,row)) way = "horizontally.";
-    if(win_v(board,token,column)) way = "vertically.";
-    if(win_d_right(board,token, row, column)) way = "diagonally right. ";
-    if(win_d_left(board,token, row, column)) way = "diagonally left.";
+    if(win_h(board,token,row)) way = "horizontal";
+    if(win_v(board,token,column)) way = "vertical";
+    if(win_d_right(board,token, row, column)) way = "diagonal dreta";
+    if(win_d_left(board,token, row, column)) way = "diagonal esquerra";
     return way;
 }  
 
@@ -218,7 +218,7 @@ int main(){
     matrix board(6,r(7," "));
     srand(5);
 
-    cout<<"Player name: ";cin>>playerName;cout<<endl;
+    cout<<"Nom del jugador: ";cin>>playerName;cout<<endl;
     
     get_board(board);
 
@@ -228,18 +228,18 @@ int main(){
             //Inv: Next turn.
             cout<<endl;
             cout<<"================================"<<endl;
-            if(turnCounter%2 == 0) cout<<playerName<<"'s turn "<<endl;
-            else cout<<"CPU's turn"<<endl;
+            if(turnCounter%2 == 0) cout<<"Torn de "<<playerName<<endl;
+            else cout<<"Torn de la CPU"<<endl;
             
             cout<<"================================"<<endl;
             cout<<endl;
 
             if(turnCounter%2 == 0){
-                cout<<"In which column do you want to place your token? (0−6): "; cin>>column;
+                cout<<"A quina columna vols col·locar la teva fitxa ? (0-6): "; cin>>column;
             } 
             else{
                 column = CPU_turn();
-                cout<<"In which column do you want to place your token? (0−6): "; cout<<column<<endl;
+                cout<<"La màquina ha decidit la columna "; cout<<column<<endl;
             }
 
             if(column<= 6 and slot_checker(board,column,row)){
@@ -248,7 +248,7 @@ int main(){
                 else                    set_slot(board,column,row,"O");
                 get_board(board);
             }
-            else cout<<"Insert a valid column!"<<endl;
+            else cout<<"Error, columna incorrecta !!"<<endl;
         }
 
         if(turnCounter%2 == 0) way = win_check(board, "X",column,row);
@@ -256,8 +256,8 @@ int main(){
 
         if(way != "none"){
             cout<<endl;
-            if(turnCounter%2 == 0) cout<<playerName<<" has connected 4 "<<way<<endl;
-            else                   cout<<"The CPU has connected 4 "<<way<<endl;
+            if(turnCounter%2 == 0) cout<<"Hi ha quatre en ratlla en "<<way<<" de "<<playerName<<"!!"<<endl;
+            else                   cout<<"Hi ha quatre en ratlla en "<<way<<" de l'ordinador!!"<<endl;
             
             gameOn = false;
         }
@@ -267,7 +267,7 @@ int main(){
 
         if(turnCounter == 42){
             cout<<endl;
-            cout<<"It's a tie! Well played."<<endl;
+            cout<<"El taulell està Ple.  EMPAT!!"<<endl;
             gameOn = false;
 
         }
